@@ -70,7 +70,6 @@ function toggleCardFlip(serverId: string) {
               v-for="server in serverList?.items" 
               :key="server.id" 
               class="server-card-container"
-              @click="toggleCardFlip(server.id)"
               @mouseleave="flippedServers[server.id] = false"
             >
               <div 
@@ -108,6 +107,7 @@ function toggleCardFlip(serverId: string) {
                           <el-link 
                             type="primary" 
                             :underline="false"
+                            @click.stop="toggleCardFlip(server.id)"
                           >
                             {{ server.detail.length > 10 ? server.detail.substring(0, 10) + '...' : server.detail }}
                           </el-link>
