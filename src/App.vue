@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Connection, Document, User } from '@element-plus/icons-vue'
-import { ElCard, ElIcon, ElScrollbar } from 'element-plus'
+import { ElCard, ElIcon, ElScrollbar, ElMessage } from 'element-plus'
 import { onMounted, ref } from 'vue'
 
 import PocketBase, { type ListResult, type RecordModel } from 'pocketbase';
@@ -31,6 +31,15 @@ function getStatusClass(status: string) {
     case '运行中': return 'status-running'
     case '离线': return 'status-offline'
     default: return 'status-unknown'
+  }
+}
+
+// 新增：处理服务器详情链接点击事件
+function handleServerDetailClick(detail: string) {
+  if (detail) {
+    window.open(detail, '_blank');
+  } else {
+    ElMessage.info('暂无详细信息');
   }
 }
 </script>
@@ -77,7 +86,16 @@ function getStatusClass(status: string) {
                   <el-icon>
                     <Document />
                   </el-icon>
-                  <el-text>详情：{{ server.detail.length > 10 ? server.detail.substring(0, 10) + '...' : server.detail }}</el-text>
+                  <el-text>
+                    详情：
+                    <el-link 
+                      type="primary" 
+                      :underline="false" 
+                      @click="handleServerDetailClick(server.detail)"
+                    >
+                      {{ server.detail.length > 10 ? server.detail.substring(0, 10) + '...' : server.detail }}
+                    </el-link>
+                  </el-text>
                 </p>
               </div>
             </el-card>
