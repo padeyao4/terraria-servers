@@ -118,8 +118,10 @@ function toggleCardFlip(serverId: string) {
                 <div class="server-card-back">
                   <el-card class="server-card" shadow="hover">
                     <div class="server-details-back">
-                      <el-scrollbar style="padding: 20px;">
-                        <el-text>{{ server.detail }}</el-text>
+                      <el-scrollbar class="server-detail-scrollbar">
+                        <div class="server-detail-content">
+                          <el-text>{{ server.detail }}</el-text>
+                        </div>
                       </el-scrollbar>
                       <div class="back-actions">
                         <el-button 
@@ -248,13 +250,31 @@ html {
   height: 100%;
   justify-content: space-between;
   padding: 20px;
+  overflow: hidden;
+}
+
+.server-detail-scrollbar {
+  width: 100%;
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.server-detail-content {
+  width: 100%;
+  height: 100%;
+  word-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
   overflow-y: auto;
+  padding-right: 10px;
 }
 
 .back-actions {
   display: flex;
   gap: 10px;
   margin-top: 15px;
+  width: 100%;
+  justify-content: center;
 }
 
 .server-card-container {
@@ -449,5 +469,24 @@ html {
 .main-content::-webkit-scrollbar {
   width: 0;
   background: transparent;
+}
+
+/* 自定义滚动条样式（可选） */
+.server-detail-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.server-detail-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.server-detail-content::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+.server-detail-content::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 </style>
