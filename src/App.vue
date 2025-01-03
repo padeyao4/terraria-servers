@@ -1,139 +1,30 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { ElCard, ElScrollbar, ElIcon } from 'element-plus'
-import { Location, User, Document, Monitor, Connection } from '@element-plus/icons-vue'
+import { Connection, Document, User } from '@element-plus/icons-vue'
+import { ElCard, ElIcon, ElScrollbar } from 'element-plus'
+import { onMounted, ref } from 'vue'
 
+import PocketBase, { type ListResult, type RecordModel } from 'pocketbase';
 
-const serverList = ref([
-  {
-    id: 1,
-    name: '服务器1',
-    address: '192.168.1.1',
-    admin: 'admin1',
-    description: '泰拉瑞亚主服务器',
-    status: '运行中'
-  },
-  {
-    id: 2,
-    name: '服务器2',
-    address: '192.168.1.2',
-    admin: 'admin2',
-    description: '泰拉瑞亚备用服务器',
-    status: '运行中'
-  },
-  {
-    id: 3,
-    name: '服务器3',
-    address: '192.168.1.3',
-    admin: 'admin3',
-    description: '泰拉瑞亚测试服务器',
-    status: '离线'
-  },
-  {
-    id: 4,
-    name: '服务器4',
-    address: '192.168.1.4',
-    admin: 'admin4',
-    description: '泰拉瑞亚开发服务器',
-    status: '运行中'
-  },
-  {
-    id: 5,
-    name: '服务器5',
-    address: '192.168.1.5',
-    admin: 'admin5',
-    description: '泰拉瑞亚社区服务器',
-    status: '运行中'
-  },
-  {
-    id: 6,
-    name: '服务器6',
-    address: '192.168.1.6',
-    admin: 'admin6',
-    description: '泰拉瑞亚PVP服务器',
-    status: '离线'
-  },
-  {
-    id: 7,
-    name: '服务器7',
-    address: '192.168.1.7',
-    admin: 'admin7',
-    description: '泰拉瑞亚生存服务器',
-    status: '运行中'
-  },
-  {
-    id: 8,
-    name: '服务器8',
-    address: '192.168.1.8',
-    admin: 'admin8',
-    description: '泰拉瑞亚创造服务器',
-    status: '运行中'
-  },
-  {
-    id: 9,
-    name: '服务器9',
-    address: '192.168.1.9',
-    admin: 'admin9',
-    description: '泰拉瑞亚模组服务器',
-    status: '离线'
-  },
-  {
-    id: 10,
-    name: '服务器10',
-    address: '192.168.1.10',
-    admin: 'admin10',
-    description: '泰拉瑞亚专家模式服务器',
-    status: '运行中'
-  },
-  {
-    id: 11,
-    name: '服务器11',
-    address: '192.168.1.11',
-    admin: 'admin11',
-    description: '泰拉瑞亚困难模式服务器',
-    status: '运行中'
-  },
-  {
-    id: 12,
-    name: '服务器12',
-    address: '192.168.1.12',
-    admin: 'admin12',
-    description: '泰拉瑞亚仲裁者服务器',
-    status: '离线'
-  },
-  {
-    id: 13,
-    name: '服务器13',
-    address: '192.168.1.13',
-    admin: 'admin13',
-    description: '泰拉瑞亚极限模式服务器',
-    status: '运行中'
-  },
-  {
-    id: 14,
-    name: '服务器14',
-    address: '192.168.1.14',
-    admin: 'admin14',
-    description: '泰拉瑞亚娱乐服务器',
-    status: '运行中'
-  },
-  {
-    id: 15,
-    name: '服务器15',
-    address: '192.168.1.15',
-    admin: 'admin15',
-    description: '泰拉瑞亚竞技服务器',
-    status: '离线'
-  },
-  {
-    id: 16,
-    name: '服务器16',
-    address: '192.168.1.16',
-    admin: 'admin16',
-    description: '泰拉瑞亚休闲服务器',
-    status: '运行中'
-  }
-])
+const pb = new PocketBase('https://pb.liangpi.site');
+
+interface Server {
+  id: string;
+  name: string;
+  address: string;
+  admin: string;
+  description: string;
+}
+
+const serverList = ref<ListResult<RecordModel>>();
+
+onMounted(async () => {
+  // fetch a paginated records list
+  const resultList = await pb.collection('terraria_server').getList(1, 50, {
+      filter: 'address != ""',
+  });
+  serverList.value = resultList;
+});
+
 
 function getStatusClass(status: string) {
   switch (status) {
@@ -161,11 +52,11 @@ function getStatusClass(status: string) {
       <main class="main-content">
         <el-scrollbar>
           <div class="server-grid">
-            <el-card v-for="server in serverList" :key="server.id" class="server-card" shadow="hover">
+            <el-card v-for="server in serverList?.items" :key="server.id" class="server-card" shadow="hover">
               <template #header>
                 <div class="card-header">
                   <el-text size="large">{{ server.name }}</el-text>
-                  <div class="server-status-indicator" :class="getStatusClass(server.status)" title="服务器状态" />
+                  <div class="server-status-indicator" :class="getStatusClass(server.online)" title="服务器状态" />
                 </div>
               </template>
 
@@ -174,7 +65,7 @@ function getStatusClass(status: string) {
                   <el-icon>
                     <Connection />
                   </el-icon>
-                  <el-text>地址：{{ server.address }}</el-text>
+                  <el-text>地址：{{ server.address }}:{{ server.port }}</el-text>
                 </p>
                 <p>
                   <el-icon>
@@ -186,7 +77,7 @@ function getStatusClass(status: string) {
                   <el-icon>
                     <Document />
                   </el-icon>
-                  <el-text>描述：{{ server.description }}</el-text>
+                  <el-text>详情：{{ server.detail.length > 10 ? server.detail.substring(0, 10) + '...' : server.detail }}</el-text>
                 </p>
               </div>
             </el-card>
