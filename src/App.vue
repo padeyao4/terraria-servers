@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { ElCard, ElScrollbar } from 'element-plus'
+import { ElCard, ElScrollbar, ElIcon } from 'element-plus'
+import { Location, User, Document, Monitor, Connection } from '@element-plus/icons-vue'
 
 
 const serverList = ref([
@@ -135,7 +136,7 @@ const serverList = ref([
 ])
 
 function getStatusClass(status: string) {
-  switch(status) {
+  switch (status) {
     case '运行中': return 'status-running'
     case '离线': return 'status-offline'
     default: return 'status-unknown'
@@ -150,47 +151,43 @@ function getStatusClass(status: string) {
         <div class="header-content">
           <h2 class="main-title">Terraria Server</h2>
           <div class="header-actions">
-            <el-button 
-              type="primary" 
-              icon="Plus" 
-              circle 
-              size="default"
-              title="添加服务器"
-            />
-            <el-avatar 
-              class="avatar" 
-              icon="User" 
-              :size="36"
-              src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642ab5acc11d8d85.jpeg" 
-            />
+            <el-button type="primary" icon="Plus" circle size="default" title="添加服务器" />
+            <el-avatar class="avatar" icon="User" :size="36"
+              src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642ab5acc11d8d85.jpeg" />
           </div>
         </div>
       </header>
-      
+
       <main class="main-content">
         <el-scrollbar>
           <div class="server-grid">
-            <el-card 
-              v-for="server in serverList" 
-              :key="server.id" 
-              class="server-card" 
-              shadow="hover"
-            >
+            <el-card v-for="server in serverList" :key="server.id" class="server-card" shadow="hover">
               <template #header>
                 <div class="card-header">
-                  <span>{{ server.name }}</span>
-                  <div 
-                    class="server-status-indicator" 
-                    :class="getStatusClass(server.status)"
-                    title="服务器状态"
-                  />
+                  <el-text size="large">{{ server.name }}</el-text>
+                  <div class="server-status-indicator" :class="getStatusClass(server.status)" title="服务器状态" />
                 </div>
               </template>
 
               <div class="server-details">
-                <p><strong>地址：</strong>{{ server.address }}</p>
-                <p><strong>管理员：</strong>{{ server.admin }}</p>
-                <p><strong>描述：</strong>{{ server.description }}</p>
+                <p>
+                  <el-icon>
+                    <Connection />
+                  </el-icon>
+                  <el-text>地址：{{ server.address }}</el-text>
+                </p>
+                <p>
+                  <el-icon>
+                    <User />
+                  </el-icon>
+                  <el-text>管理员：{{ server.admin }}</el-text>
+                </p>
+                <p>
+                  <el-icon>
+                    <Document />
+                  </el-icon>
+                  <el-text>描述：{{ server.description }}</el-text>
+                </p>
               </div>
             </el-card>
           </div>
@@ -201,17 +198,20 @@ function getStatusClass(status: string) {
 </template>
 
 <style scoped>
-body, html {
+body,
+html {
   margin: 0;
   padding: 0;
   background: linear-gradient(135deg, #f6f8f9 0%, #e5ebee 100%);
   min-height: 100vh;
+  overflow: hidden;
 }
 
-.root{
+.root {
   background-color: #f6f8f9;
   width: 100vw;
   height: 100%;
+  overflow: hidden;
 }
 
 .container {
@@ -283,14 +283,16 @@ body, html {
 }
 
 .server-details p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin: 5px 0;
   line-height: 1.5;
 }
 
-.server-details strong {
+.server-details .el-icon {
   color: #2c3e50;
-  font-weight: 500;
-  margin-right: 5px;
+  font-size: 16px;
 }
 
 .server-metrics {
@@ -377,15 +379,18 @@ body, html {
 }
 
 .status-running {
-  background-color: #67c23a;  /* 绿色 */
+  background-color: #67c23a;
+  /* 绿色 */
 }
 
 .status-offline {
-  background-color: #f56c6c;  /* 红色 */
+  background-color: #f56c6c;
+  /* 红色 */
 }
 
 .status-unknown {
-  background-color: #e6a23c;  /* 黄色 */
+  background-color: #e6a23c;
+  /* 黄色 */
 }
 
 .main-content {
