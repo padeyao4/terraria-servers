@@ -16,6 +16,7 @@ interface Server {
 }
 
 const serverList = ref<ListResult<RecordModel>>();
+const flippedServers = ref<{[key: string]: boolean}>({});
 
 onMounted(async () => {
   // fetch a paginated records list
@@ -25,7 +26,6 @@ onMounted(async () => {
   serverList.value = resultList;
 });
 
-
 function getStatusClass(status: string) {
   switch (status) {
     case '运行中': return 'status-running'
@@ -34,13 +34,18 @@ function getStatusClass(status: string) {
   }
 }
 
-// 新增：处理服务器详情链接点击事件
+// 处理服务器详情链接点击事件
 function handleServerDetailClick(detail: string) {
   if (detail) {
     window.open(detail, '_blank');
   } else {
     ElMessage.info('暂无详细信息');
   }
+}
+
+// 切换卡片翻转状态
+function toggleCardFlip(serverId: string) {
+  flippedServers.value[serverId] = !flippedServers.value[serverId];
 }
 </script>
 
@@ -61,44 +66,82 @@ function handleServerDetailClick(detail: string) {
       <main class="main-content">
         <el-scrollbar>
           <div class="server-grid">
-            <el-card v-for="server in serverList?.items" :key="server.id" class="server-card" shadow="hover">
-              <template #header>
-                <div class="card-header">
-                  <el-text size="large">{{ server.name }}</el-text>
-                  <div class="server-status-indicator" :class="getStatusClass(server.online)" title="服务器状态" />
-                </div>
-              </template>
+            <div 
+              v-for="server in serverList?.items" 
+              :key="server.id" 
+              class="server-card-container"
+            >
+              <div 
+                class="server-card-inner" 
+                :class="{ 'is-flipped': flippedServers[server.id] }"
+              >
+                <div class="server-card-front">
+                  <el-card class="server-card" shadow="hover">
+                    <template #header>
+                      <div class="card-header">
+                        <el-text size="large">{{ server.name }}</el-text>
+                        <div class="server-status-indicator" :class="getStatusClass(server.online)" title="服务器状态" />
+                      </div>
+                    </template>
 
-              <div class="server-details">
-                <p>
-                  <el-icon>
-                    <Connection />
-                  </el-icon>
-                  <el-text>地址：{{ server.address }}:{{ server.port }}</el-text>
-                </p>
-                <p>
-                  <el-icon>
-                    <User />
-                  </el-icon>
-                  <el-text>管理员：{{ server.admin }}</el-text>
-                </p>
-                <p>
-                  <el-icon>
-                    <Document />
-                  </el-icon>
-                  <el-text>
-                    详情：
-                    <el-link 
-                      type="primary" 
-                      :underline="false" 
-                      @click="handleServerDetailClick(server.detail)"
-                    >
-                      {{ server.detail.length > 10 ? server.detail.substring(0, 10) + '...' : server.detail }}
-                    </el-link>
-                  </el-text>
-                </p>
+                    <div class="server-details">
+                      <p>
+                        <el-icon>
+                          <Connection />
+                        </el-icon>
+                        <el-text>地址：{{ server.address }}:{{ server.port }}</el-text>
+                      </p>
+                      <p>
+                        <el-icon>
+                          <User />
+                        </el-icon>
+                        <el-text>管理员：{{ server.admin }}</el-text>
+                      </p>
+                      <p>
+                        <el-icon>
+                          <Document />
+                        </el-icon>
+                        <el-text>
+                          详情：
+                          <el-link 
+                            type="primary" 
+                            :underline="false" 
+                            @click="toggleCardFlip(server.id)"
+                          >
+                            {{ server.detail.length > 10 ? server.detail.substring(0, 10) + '...' : server.detail }}
+                          </el-link>
+                        </el-text>
+                      </p>
+                    </div>
+                  </el-card>
+                </div>
+                <div class="server-card-back">
+                  <el-card class="server-card" shadow="hover">
+                    <div class="server-details-back">
+                      <el-scrollbar style="padding: 20px;">
+                        <el-text>{{ server.detail }}</el-text>
+                      </el-scrollbar>
+                      <div class="back-actions">
+                        <el-button 
+                          type="primary" 
+                          size="small" 
+                          @click="handleServerDetailClick(server.detail)"
+                        >
+                          查看详情
+                        </el-button>
+                        <el-button 
+                          type="info" 
+                          size="small" 
+                          @click="toggleCardFlip(server.id)"
+                        >
+                          返回
+                        </el-button>
+                      </div>
+                    </div>
+                  </el-card>
+                </div>
               </div>
-            </el-card>
+            </div>
           </div>
         </el-scrollbar>
       </main>
@@ -162,21 +205,116 @@ html {
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 20px;
   margin: 16px;
+  grid-auto-rows: 1fr;
 }
 
 .server-card {
-  transition: all 0.3s ease;
-  border-radius: 6px;
-  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 300px;
 }
 
-:deep(.el-card) {
-  border-radius: 6px;
+.server-details {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-:deep(.el-card__header) {
-  border-top-left-radius: 6px;
-  border-top-right-radius: 6px;
+.server-card-front,
+.server-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.server-card-front {
+  transform: rotateY(0deg);
+}
+
+.server-card-back {
+  transform: rotateY(180deg);
+}
+
+.server-details-back {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  height: 100%;
+  justify-content: space-between;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.back-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.server-card-container {
+  perspective: 1000px;
+  width: 100%;
+  height: 100%;
+  min-height: 300px;
+}
+
+.server-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.8s;
+  transform-style: preserve-3d;
+}
+
+.server-card-inner.is-flipped {
+  transform: rotateY(180deg);
+}
+
+.server-card-front,
+.server-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+}
+
+.server-card-back {
+  transform: rotateY(180deg);
+}
+
+.server-details-back {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  height: 100%;
+  justify-content: space-between;
+  padding: 20px;
+}
+
+.back-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.server-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  margin: 16px;
+}
+
+.server-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .card-header {
