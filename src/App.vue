@@ -166,8 +166,6 @@ function getStatusClass(status: string) {
         </div>
       </header>
       
-      <hr class="divider"/>
-      
       <main class="main-content">
         <el-scrollbar>
           <div class="server-grid">
@@ -219,10 +217,19 @@ body, html {
   border-radius: 12px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .header {
-  margin-bottom: 20px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid rgba(44, 62, 80, 0.1);
 }
 
 .header-content {
@@ -369,5 +376,17 @@ body, html {
 
 .status-unknown {
   background-color: #e6a23c;  /* 黄色 */
+}
+
+.main-content {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+/* 隐藏滚动条，但保留滚动功能 */
+.main-content::-webkit-scrollbar {
+  width: 0;
+  background: transparent;
 }
 </style>
