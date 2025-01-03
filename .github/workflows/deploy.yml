@@ -27,7 +27,7 @@ jobs:
       - name: Build Project
         run: |
           npm install
-          npm run web:build
+          npm run build
 
       - name: Deploy to Server
         uses: appleboy/scp-action@v0.1.7
