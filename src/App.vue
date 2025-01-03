@@ -70,6 +70,8 @@ function toggleCardFlip(serverId: string) {
               v-for="server in serverList?.items" 
               :key="server.id" 
               class="server-card-container"
+              @click="toggleCardFlip(server.id)"
+              @mouseleave="flippedServers[server.id] = false"
             >
               <div 
                 class="server-card-inner" 
@@ -105,8 +107,7 @@ function toggleCardFlip(serverId: string) {
                           详情：
                           <el-link 
                             type="primary" 
-                            :underline="false" 
-                            @click="toggleCardFlip(server.id)"
+                            :underline="false"
                           >
                             {{ server.detail.length > 10 ? server.detail.substring(0, 10) + '...' : server.detail }}
                           </el-link>
@@ -123,22 +124,6 @@ function toggleCardFlip(serverId: string) {
                           <el-text>{{ server.detail }}</el-text>
                         </div>
                       </el-scrollbar>
-                      <div class="back-actions">
-                        <el-button 
-                          type="primary" 
-                          size="small" 
-                          @click="handleServerDetailClick(server.detail)"
-                        >
-                          查看详情
-                        </el-button>
-                        <el-button 
-                          type="info" 
-                          size="small" 
-                          @click="toggleCardFlip(server.id)"
-                        >
-                          返回
-                        </el-button>
-                      </div>
                     </div>
                   </el-card>
                 </div>
@@ -248,7 +233,7 @@ html {
   align-items: center;
   text-align: center;
   height: 100%;
-  justify-content: space-between;
+  justify-content: center;
   padding: 20px;
   overflow: hidden;
 }
@@ -282,6 +267,7 @@ html {
   width: 100%;
   height: 100%;
   min-height: 300px;
+  cursor: pointer;
 }
 
 .server-card-inner {
@@ -314,7 +300,7 @@ html {
   align-items: center;
   text-align: center;
   height: 100%;
-  justify-content: space-between;
+  justify-content: center;
   padding: 20px;
 }
 
