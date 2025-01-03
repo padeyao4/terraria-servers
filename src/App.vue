@@ -2,13 +2,6 @@
 import { ref } from 'vue'
 import { ElCard, ElTag, ElScrollbar } from 'element-plus'
 
-function getProgressColor(percentage: string) {
-  const num = parseInt(percentage)
-  if (num < 60) return '#67c23a'  // 绿色
-  if (num < 80) return '#e6a23c'  // 黄色
-  return '#f56c6c'  // 红色
-}
-
 const serverList = ref([
   {
     id: 1,
@@ -16,9 +9,7 @@ const serverList = ref([
     address: '192.168.1.1',
     admin: 'admin',
     description: '这是一个泰拉瑞亚服务器',
-    status: '运行中',
-    cpu: '80%',
-    memory: '60%'
+    status: '运行中'
   },
   {
     id: 2,
@@ -26,9 +17,7 @@ const serverList = ref([
     address: '192.168.1.2',
     admin: 'admin',
     description: '这是一个泰拉瑞亚服务器',
-    status: '运行中',
-    cpu: '50%',
-    memory: '40%'
+    status: '运行中'
   },
   {
     id: 3,
@@ -36,56 +25,58 @@ const serverList = ref([
     address: '192.168.1.3',
     admin: 'admin',
     description: '这是一个泰拉瑞亚服务器',
-    status: '运行中',
-    cpu: '70%',
-    memory: '55%'
+    status: '运行中'
   }
 ])
 </script>
 
 <template>
   <div class="root">
-  <div class="container">
-    <header class="header">
-      <div class="header-content">
-        <h2 style="color: #2c3e50;">Terraria Server List</h2>
-        <el-avatar class="avatar" icon="User" :size="50"
-          src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642ab5acc11d8d85.jpeg" />
-      </div>
-    </header>
-    <hr style="border: 1px solid #2c3e5020;margin-bottom: 24px;"/>
-    <main class="main-content">
-      <el-scrollbar>
-        <div class="server-grid">
-          <el-card v-for="server in serverList" :key="server.id" class="server-card" shadow="hover">
-            <template #header>
-              <div class="card-header">
-                <span>{{ server.name }}</span>
-                <el-tag type="success" size="small">{{ server.status }}</el-tag>
-              </div>
-            </template>
-
-            <div class="server-details">
-              <p><strong>地址：</strong>{{ server.address }}</p>
-              <p><strong>管理员：</strong>{{ server.admin }}</p>
-              <p><strong>描述：</strong>{{ server.description }}</p>
-
-              <div class="server-metrics">
-                <div class="metric">
-                  <span>CPU</span>
-                  <el-progress :percentage="parseInt(server.cpu)" :color="getProgressColor(server.cpu)" />
-                </div>
-                <div class="metric">
-                  <span>内存</span>
-                  <el-progress :percentage="parseInt(server.memory)" :color="getProgressColor(server.memory)" />
-                </div>
-              </div>
-            </div>
-          </el-card>
+    <div class="container">
+      <header class="header">
+        <div class="header-content">
+          <h2 class="main-title">Terraria Server</h2>
+          <div class="header-actions">
+            <el-button 
+              type="primary" 
+              icon="Plus" 
+              circle 
+              size="default"
+              title="添加服务器"
+            />
+            <el-avatar 
+              class="avatar" 
+              icon="User" 
+              :size="36"
+              src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642ab5acc11d8d85.jpeg" 
+            />
+          </div>
         </div>
-      </el-scrollbar>
-    </main>
-  </div>
+      </header>
+      
+      <hr class="divider"/>
+      
+      <main class="main-content">
+        <el-scrollbar>
+          <div class="server-grid">
+            <el-card v-for="server in serverList" :key="server.id" class="server-card" shadow="hover">
+              <template #header>
+                <div class="card-header">
+                  <span>{{ server.name }}</span>
+                  <el-tag type="success" size="small">{{ server.status }}</el-tag>
+                </div>
+              </template>
+
+              <div class="server-details">
+                <p><strong>地址：</strong>{{ server.address }}</p>
+                <p><strong>管理员：</strong>{{ server.admin }}</p>
+                <p><strong>描述：</strong>{{ server.description }}</p>
+              </div>
+            </el-card>
+          </div>
+        </el-scrollbar>
+      </main>
+    </div>
   </div>
 </template>
 
@@ -157,5 +148,62 @@ body, html {
   display: flex;
   flex-direction: column;
   gap: 5px;
+}
+
+.title-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.title-section h2 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.subtitle {
+  margin: 0;
+  color: #7f8c8d;
+  font-size: 0.9rem;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid rgba(44, 62, 80, 0.1);
+  margin: 20px 0;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+}
+
+.main-title {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
 }
 </style>
