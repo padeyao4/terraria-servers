@@ -1,0 +1,21 @@
+@import './base.css';
+
+#app {
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* 移除默认的媒体查询样式 */
+@media (min-width: 1024px) {
+  body {
+    display: block;
+    place-items: initial;
+  }
+
+  #app {
+    display: block;
+    grid-template-columns: none;
+    padding: 0;
+  }
+}
