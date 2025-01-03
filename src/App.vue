@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { ElCard, ElScrollbar } from 'element-plus'
+
 
 const serverList = ref([
   {
@@ -169,7 +170,12 @@ function getStatusClass(status: string) {
       <main class="main-content">
         <el-scrollbar>
           <div class="server-grid">
-            <el-card v-for="server in serverList" :key="server.id" class="server-card" shadow="hover">
+            <el-card 
+              v-for="server in serverList" 
+              :key="server.id" 
+              class="server-card" 
+              shadow="hover"
+            >
               <template #header>
                 <div class="card-header">
                   <span>{{ server.name }}</span>
@@ -212,7 +218,6 @@ body, html {
   max-width: 1200px;
   height: 100vh;
   margin: 0 auto;
-  padding: 20px;
   background: rgba(255, 255, 255, 0.9);
   border-radius: 12px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
@@ -225,15 +230,20 @@ body, html {
   position: sticky;
   top: 0;
   z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(10px);
-  padding-bottom: 10px;
-  margin-bottom: 10px;
+  padding: 16px;
   border-bottom: 1px solid rgba(44, 62, 80, 0.1);
 }
 
 .header-content {
   display: flex;
+  height: 100%;
+  width: 100%;
   justify-content: space-between;
   align-items: center;
 }
@@ -242,11 +252,13 @@ body, html {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 20px;
+  margin: 16px;
 }
 
 .server-card {
   transition: all 0.3s ease;
   border-radius: 6px;
+  overflow: hidden;
 }
 
 :deep(.el-card) {
@@ -265,11 +277,9 @@ body, html {
 }
 
 .server-details {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  font-size: 0.95rem;
-  color: #34495e;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 10px;
+  border-radius: 6px;
 }
 
 .server-details p {
@@ -381,7 +391,6 @@ body, html {
 .main-content {
   flex-grow: 1;
   overflow-y: auto;
-  padding-right: 10px;
 }
 
 /* 隐藏滚动条，但保留滚动功能 */
